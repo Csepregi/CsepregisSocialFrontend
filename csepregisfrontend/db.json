@@ -1,0 +1,25 @@
+{
+	"posts": [
+		{
+			"id": 1,
+			"name": "sweet home",
+			"description": "hello",
+			"location": "Budapest",
+			"date": "2019-05-30T19:20:14.298Z"
+		},
+		{
+			"id": 2,
+			"name": "second home",
+			"description": "hello",
+			"location": "Roma",
+			"date": "2019-05-30T18:39:34.091Z"
+		},
+		{
+			"id": 3,
+			"name": "vacation",
+			"description": "hello",
+			"location": "Matera",
+			"date": "2019-05-30T19:20:14.298Z"
+		}
+	]
+}
