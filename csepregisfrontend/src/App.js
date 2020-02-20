@@ -1,96 +1,101 @@
 import React, { useState, useEffect } from 'react'
-import Post from './components/Post'
+import Place from './components/Place'
 import Notification from './components/Notification'
 import Footer from './components/Footer'
-import postService from './services/posts'
+import placeService from './services/places'
+import { CardDeck } from 'react-bootstrap'
 
 const App = () => {
-  const [posts, setPosts] = useState([])
-  const [newPost, setNewPost] = useState('')
-  const [showAll, setShowAll] = useState(true)
+  const [places, setPlaces] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newDescription, setNewDescription] = useState('')
+  const [newLocation, setNewLocation] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    postService
+    placeService
       .getAll()
-      .then(initialPosts => setPosts(initialPosts))
+      .then(initialPlaces => setPlaces(initialPlaces))
   }, [])
 
-
-  const rows = () => posts.map(post =>
-    <Post
-      key={post.id}
-      post={post}
+  const rows = () => places.map(place =>
+    <Place
+      key={place.id}
+      place={place}
     />
   )
 
-  const handleNoteChange = (event) => {
-    setNewPost(event.target.value)
+  const handleNameChange = (event) => {
+    setNewName(event.target.value)
   }
 
-  const addPost = (event) => {
+  const handleDescriptionChange = (event) => {
+    setNewDescription(event.target.value)
+  }
+
+  const handleLocationChange = (event) => {
+    setNewLocation(event.target.value)
+  }
+
+  const addPlace = (event) => {
     event.preventDefault()
-    const noteObject = {
-      content: newPost,
+    const placeObject = {
+      name: newName,
+      description: newDescription,
+      location: newLocation,
       date: new Date().toISOString(),
-      important: Math.random() > 0.5,
-      id: posts.length + 1,
+      id: places.length + 1,
     }
 
-    postService
-      .create(noteObject)
+    placeService
+      .create(placeObject)
       .then(data => {
-        setPosts(posts.concat(data))
-        setNewPost('')
+        setPlaces(places.concat(data))
+        setNewName('')
+        setNewDescription('')
+        setNewLocation('')
       })
   }
 
-  // const toggleImportanceOf = id => {
-  //   const post = posts.find(n => n.id === id)
-  //   const changedNote = { ...post, important: !note.important }
-
-  // const updatePost = async (changedNote, id) => {
-  //   const data = await postService.update(changedNote, id)
-  //   // map blogs and change one which got liked
-  //   const newPosts = [...posts].map(post => post.id === post.id ? data : post)
-  //   setPosts(newPost)
-
-  // postService
-  //   .update(id, changedNote)
-  //   .then(returnedNote => {
-  //     setPosts(posts.map(note => note.id !== id ? post : returnedNote))
-  //   })
-  //   .catch(error => {
-  //     setErrorMessage(
-  //       `Note '${post.content}' was already removed from server`
-  //     )
-  //     setTimeout(() => {
-  //       setErrorMessage(null)
-  //     }, 5000)
-  //     setPosts(posts.filter(n => n.id !== id))
-  //   })
-  //}
-
-
   return (
     <div>
-      <h1>Posts</h1>
+      <h1>Shared places</h1>
 
       <Notification message={errorMessage} />
 
       <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
-        </button>
       </div>
-      <ul>
+      <CardDeck>
         {rows()}
-      </ul>
-      <form onSubmit={addPost}>
-        <input
-          value={newPost}
-          onChange={handleNoteChange}
-        />
+      </CardDeck>
+      <form onSubmit={addPlace}>
+        <div>
+          <label>
+            Name
+          <input
+              value={newName}
+              onChange={handleNameChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Description
+          <input
+              value={newDescription}
+              onChange={handleDescriptionChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Location
+          <input
+              value={newLocation}
+              onChange={handleLocationChange}
+            />
+          </label>
+        </div>
         <button type="submit">save</button>
       </form>
 
