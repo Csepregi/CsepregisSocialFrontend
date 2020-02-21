@@ -18,12 +18,7 @@ const App = () => {
       .then(initialPlaces => setPlaces(initialPlaces))
   }, [])
 
-  const rows = () => places.map(place =>
-    <Place
-      key={place.id}
-      place={place}
-    />
-  )
+  const rows = () => places.map(place => <Place key={place.id} place={place} />)
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
