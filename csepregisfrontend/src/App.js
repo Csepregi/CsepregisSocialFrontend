@@ -18,7 +18,18 @@ const App = () => {
       .then(initialPlaces => setPlaces(initialPlaces))
   }, [])
 
-  const rows = () => places.map(place => <Place key={place.id} place={place} />)
+  //updating the placelist to render once blog has been deleted
+  const deletePlace = (id, name) => {
+    return () => {
+      if (window.confirm(`Delete ${name}`)) {
+        placeService.remove(id, name).then(() => {
+          setPlaces(places.filter(place => place.id !== id))
+        })
+      }
+    }
+  }
+
+  const rows = () => places.map(place => <Place key={place.id} place={place} deletePlace={deletePlace} />)
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
