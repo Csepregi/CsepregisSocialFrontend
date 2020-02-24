@@ -4,7 +4,10 @@ import Notification from './components/Notification'
 import Footer from './components/Footer'
 import placeService from './services/places'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import PlaceForm from './components/PlaceForm'
 import { CardDeck } from 'react-bootstrap'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [places, setPlaces] = useState([])
@@ -15,6 +18,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     placeService
@@ -65,6 +69,11 @@ const App = () => {
     }
   }
 
+  const logOut = async () => {
+    await window.localStorage.removeItem('loggedPlaceappUser');
+    setUser(null)
+  }
+
   const rows = () => places.map(place => <Place key={place.id} place={place} deletePlace={deletePlace} />)
 
   const handleNameChange = (event) => {
@@ -99,61 +108,42 @@ const App = () => {
       })
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+    return (
       <div>
-        username
-        <input
-          type='text'
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            handleSubmit={handleLogin}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            username={username}
+            password={password}
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
       </div>
-      <div>
-        password
-        <input
-          type='password'
-          value={password}
-          name="password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
+    )
+  }
 
   const placeForm = () => (
-    <form onSubmit={addPlace}>
-      <div>
-        <label>
-          Name
-          <input
-            value={newName}
-            onChange={handleNameChange}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Description
-          <input
-            value={newDescription}
-            onChange={handleDescriptionChange}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Location
-          <input
-            value={newLocation}
-            onChange={handleLocationChange}
-          />
-        </label>
-      </div>
-      <button type="submit">save</button>
-    </form>
+    <Togglable buttonLabel="new place" logOut={logOut}>
+      <PlaceForm
+        onSubmit={addPlace}
+        handleNameChange={handleNameChange}
+        handleDescriptionChange={handleDescriptionChange}
+        handleLocationChange={handleLocationChange}
+        name={newName}
+        description={newDescription}
+        location={newLocation}
+        logOut={logOut}
+      />
+    </Togglable>
+
   )
 
   return (
@@ -161,7 +151,6 @@ const App = () => {
       <h1>Shared places</h1>
 
       <Notification message={errorMessage} />
-      <h2>Login</h2>
       {user === null ?
         loginForm() :
         <div>
