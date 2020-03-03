@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import Place from './Place'
+import React from 'react'
+import PropTypes from 'prop-types'
 
 const PlaceForm = ({ onSubmit, logOut, handleNameChange, handleDescriptionChange, handleLocationChange, name, description, location }) => {
 	return (
@@ -10,9 +10,8 @@ const PlaceForm = ({ onSubmit, logOut, handleNameChange, handleDescriptionChange
 				<div>
 					<label>
 						Name
-          <input
-							value={name}
-							onChange={handleNameChange}
+          <input className='name'
+							{...name}
 						/>
 					</label>
 				</div>
@@ -20,8 +19,7 @@ const PlaceForm = ({ onSubmit, logOut, handleNameChange, handleDescriptionChange
 					<label>
 						Description
           <input
-							value={description}
-							onChange={handleDescriptionChange}
+							{...description}
 						/>
 					</label>
 				</div>
@@ -29,8 +27,7 @@ const PlaceForm = ({ onSubmit, logOut, handleNameChange, handleDescriptionChange
 					<label>
 						Location
           <input
-							value={location}
-							onChange={handleLocationChange}
+							{...location}
 						/>
 					</label>
 				</div>
@@ -39,5 +36,13 @@ const PlaceForm = ({ onSubmit, logOut, handleNameChange, handleDescriptionChange
 		</div>
 	)
 }
+
+// PlaceForm.propTypes = {
+// 	handleSubmit: PropTypes.func.isRequired,
+// 	name: PropTypes.object.isRequired,
+// 	location: PropTypes.object.isRequired,
+// 	description: PropTypes.object.isRequired
+
+// }
 
 export default PlaceForm

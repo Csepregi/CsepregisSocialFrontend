@@ -8,15 +8,19 @@ import LoginForm from './components/LoginForm'
 import PlaceForm from './components/PlaceForm'
 import { CardDeck } from 'react-bootstrap'
 import Togglable from './components/Togglable'
+import { useField } from './hooks/index'
 
 const App = () => {
   const [places, setPlaces] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newDescription, setNewDescription] = useState('')
-  const [newLocation, setNewLocation] = useState('')
+  // const [newName, setNewName] = useState('')
+  // const [newDescription, setNewDescription] = useState('')
+  // const [newLocation, setNewLocation] = useState('')
+  const name = useField('text')
+  const location = useField('text')
+  const description = useField('text')
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const username = useField('text')
+  const password = useField('password')
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
 
@@ -39,7 +43,7 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({
-        username, password
+        username: username.value, password: password.value
       })
 
       window.localStorage.setItem(
@@ -48,8 +52,8 @@ const App = () => {
 
       placeService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+      // setUsername('')
+      // setPassword('')
     } catch (error) {
       setErrorMessage('Wrong Credentials')
       setTimeout(() => {
@@ -69,6 +73,8 @@ const App = () => {
     }
   }
 
+
+
   const logOut = async () => {
     await window.localStorage.removeItem('loggedPlaceappUser');
     setUser(null)
@@ -76,24 +82,14 @@ const App = () => {
 
   const rows = () => places.map(place => <Place key={place.id} place={place} deletePlace={deletePlace} />)
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
-
-  const handleDescriptionChange = (event) => {
-    setNewDescription(event.target.value)
-  }
-
-  const handleLocationChange = (event) => {
-    setNewLocation(event.target.value)
-  }
 
   const addPlace = (event) => {
     event.preventDefault()
+    placeFormRef.current.toggleVisibility()
     const placeObject = {
-      name: newName,
-      description: newDescription,
-      location: newLocation,
+      name: name.value,
+      description: description.value,
+      location: location.value,
       date: new Date().toISOString(),
       id: places.length + 1,
     }
@@ -102,10 +98,10 @@ const App = () => {
       .create(placeObject)
       .then(data => {
         setPlaces(places.concat(data))
-        setNewName('')
-        setNewDescription('')
-        setNewLocation('')
       })
+    name.reset()
+    location.reset()
+    description.reset()
   }
 
   const loginForm = () => {
@@ -119,8 +115,8 @@ const App = () => {
         <div style={showWhenVisible}>
           <LoginForm
             handleSubmit={handleLogin}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
+            // handleUsernameChange={({ target }) => setUsername(target.value)}
+            // handlePasswordChange={({ target }) => setPassword(target.value)}
             username={username}
             password={password}
           />
@@ -130,34 +126,39 @@ const App = () => {
     )
   }
 
+  const placeFormRef = React.createRef()
+
   const placeForm = () => (
-    <Togglable buttonLabel="new place" logOut={logOut}>
+    <Togglable buttonLabel="new place" logOut={logOut} ref={placeFormRef}>
       <PlaceForm
         onSubmit={addPlace}
-        handleNameChange={handleNameChange}
-        handleDescriptionChange={handleDescriptionChange}
-        handleLocationChange={handleLocationChange}
-        name={newName}
-        description={newDescription}
-        location={newLocation}
+        name={name}
+        description={description}
+        location={location}
         logOut={logOut}
       />
     </Togglable>
 
   )
 
+  if (user === null) {
+    return (
+      <div>
+        <Notification message={errorMessage} />
+        {loginForm()}
+      </div>
+    )
+  }
+
   return (
     <div>
       <h1>Shared places</h1>
 
       <Notification message={errorMessage} />
-      {user === null ?
-        loginForm() :
-        <div>
-          <p>{user.name} logged in</p>
-          {placeForm()}
-        </div>
-      }
+      <div>
+        <p>{user.name} logged in</p>
+        {placeForm()}
+      </div>
       <div>
       </div>
       <h2>Locations</h2>

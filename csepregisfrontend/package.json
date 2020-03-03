@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
@@ -18,7 +16,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server -p3001 db.json"
+    "server": "json-server -p3001 db.json",
+    "eslint": "eslint ."
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
@@ -37,6 +36,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.1",
+    "eslint-plugin-react-hooks": "^2.5.0",
     "json-server": "^0.16.0"
   }
 }

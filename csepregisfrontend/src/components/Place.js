@@ -3,9 +3,8 @@ import { Card } from 'react-bootstrap'
 
 const Place = ({ place, deletePlace }) => {
 
-
 	return (
-		<Card style={{ width: '30px' }}>
+		<Card style={{ width: '30px' }} className='place'>
 			<Card.Body>
 				<Card.Title>{place.name}</Card.Title>
 				<Card.Text>{place.description}</Card.Text>
